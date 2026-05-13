@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI&데이터팀 수집 이력 & 이슈</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR','Segoe UI',sans-serif;
+  font-size:14px;color:#111;background:#F2F1ED;padding:32px 20px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+
+/* ── 헤더 ── */
+.header{padding-bottom:18px;border-bottom:2px solid #222}
+.header h1{font-size:18px;font-weight:700;color:#111;margin-bottom:5px;letter-spacing:-.01em}
+.header p{font-size:12px;color:#555;font-weight:500}
+
+/* ── 공통 배지 ── */
+.b{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap}
+.b-at{background:#D4E8FA;color:#0A3566}
+.b-ga{background:#CFF0E2;color:#064030}
+.b-gs{background:#FAE8C4;color:#5C3200}
+.b-hm{background:#E8DEFA;color:#3A0F6B}
+.b-open{background:#FBDADA;color:#6B0F0F}
+.b-done{background:#D4EDBE;color:#2A5200}
+
+/* ════════════════════════
+   현재 이슈 배너
+════════════════════════ */
+.live-section{}
+.section-label{
+  font-size:11px;font-weight:700;color:#444;
+  letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:12px;padding-bottom:8px;
+  border-bottom:2px solid #222
+}
+
+.live-banner{
+  background:#FFFCFC;border:1.5px solid #E8A0A0;
+  border-left:5px solid #D93A3A;
+  border-radius:10px;padding:16px 20px;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:16px;flex-wrap:wrap
+}
+.live-banner-left{}
+.live-banner-title{
+  font-size:14px;font-weight:700;color:#111;
+  margin-bottom:6px;display:flex;align-items:center;gap:8px
+}
+.live-dot{
+  width:9px;height:9px;border-radius:50%;background:#D93A3A;
+  display:inline-block;flex-shrink:0;
+  animation:pulse 1.6s ease-in-out infinite
+}
+@keyframes pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.5;transform:scale(1.3)}
+}
+.live-banner-detail{font-size:12px;color:#333;line-height:1.8;font-weight:500}
+.live-banner-detail code{
+  font-family:'SF Mono','Fira Code',monospace;font-size:11px;
+  background:#F5EDED;padding:1px 5px;border-radius:3px;color:#6B0F0F;font-weight:700
+}
+.live-banner-meta{
+  font-size:11px;color:#A32D2D;font-weight:700;
+  white-space:nowrap;padding-top:2px
+}
+
+.live-resolved{
+  background:#F6FCF0;border:1.5px solid #9ED080;
+  border-left:5px solid #3D8B22;
+  border-radius:10px;padding:14px 20px;margin-top:8px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap
+}
+.live-resolved-text{font-size:13px;font-weight:600;color:#2A5200}
+.live-resolved-meta{font-size:11px;color:#3D8B22;font-weight:700;white-space:nowrap}
+
+/* ════════════════════════
+   타임라인
+════════════════════════ */
+.tl-section{}
+
+.tl-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;flex-wrap:wrap;gap:10px
+}
+.tl-toolbar-left{font-size:12px;color:#444;font-weight:700}
+.toggle-wrap{display:flex;gap:6px}
+.toggle-btn{
+  padding:6px 16px;font-size:12px;font-weight:700;
+  border:2px solid #CCC;border-radius:20px;cursor:pointer;
+  background:#fff;color:#555;transition:all .15s
+}
+.toggle-btn.active{background:#111;color:#fff;border-color:#111}
+
+/* 세로 타임라인 — flexbox */
+.tl-track{position:relative}
+.tl-track::before{
+  content:'';position:absolute;left:60px;top:0;bottom:0;
+  width:2px;background:#D0CFC8;z-index:0
+}
+
+.tl-item{
+  display:flex;align-items:flex-start;
+  margin-bottom:12px;position:relative
+}
+.tl-item.hidden{display:none}
+
+.tl-date-col{
+  width:52px;flex-shrink:0;
+  text-align:right;padding-top:12px;padding-right:0
+}
+.tl-date-text{font-size:11px;font-weight:700;color:#333;line-height:1.5}
+
+.tl-node-wrap{
+  width:18px;flex-shrink:0;
+  display:flex;justify-content:center;
+  padding-top:15px;position:relative;z-index:1
+}
+.tl-node{
+  width:12px;height:12px;border-radius:50%;flex-shrink:0;
+  background:#AAA;border:2px solid #F2F1ED
+}
+.tl-node.ev-normal{background:#999}
+.tl-node.ev-issue{background:#D93A3A;width:13px;height:13px}
+.tl-node.ev-done{background:#3D8B22;width:13px;height:13px}
+.tl-node.ev-open{background:#D93A3A;width:13px;height:13px}
+
+.tl-card-wrap{flex:1;padding-left:14px}
+
+.tl-card{
+  background:#fff;border:1px solid #D8D7D2;border-radius:10px;
+  padding:12px 16px
+}
+.tl-card.is-issue{border-color:#E8A0A0;border-left:4px solid #D93A3A}
+.tl-card.is-open{border-color:#E8A0A0;border-left:4px solid #D93A3A;background:#FFFCFC}
+.tl-card.is-done{border-color:#9ED080;border-left:4px solid #3D8B22}
+
+.tl-card-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:6px}
+.tl-card-title{font-size:14px;font-weight:700;color:#111;line-height:1.4;margin-bottom:5px}
+.tl-card-detail{font-size:12px;color:#333;line-height:1.8;font-weight:500}
+.tl-card-detail code{
+  font-family:'SF Mono','Fira Code',monospace;font-size:11px;
+  background:#F2F1ED;padding:1px 5px;border-radius:3px;color:#111;font-weight:700
+}
+.tl-resolve{margin-top:8px;padding-top:8px;border-top:1px solid #E8E7E0}
+.tl-resolve-text{font-size:12px;font-weight:700;line-height:1.6}
+.tl-resolve-text.done{color:#2A5200}
+.tl-resolve-text.open{color:#6B0F0F}
+
+.tl-month-divider{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:12px;margin-top:4px
+}
+.tl-month-divider span{
+  font-size:11px;font-weight:700;color:#444;
+  letter-spacing:.06em;text-transform:uppercase;
+  background:#F2F1ED;padding-right:8px;
+  white-space:nowrap;position:relative;z-index:1
+}
+.tl-month-divider::after{content:'';flex:1;height:1px;background:#D0CFC8}
+
+/* ════════════════════════
+   시스템별 아코디언
+════════════════════════ */
+.accordion-section{}
+
+.accordion{
+  background:#fff;border:1px solid #D8D7D2;border-radius:10px;
+  overflow:hidden;margin-bottom:8px
+}
+.accordion-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 18px;cursor:pointer;user-select:none;
+  border-bottom:1px solid transparent;transition:background .15s
+}
+.accordion-head:hover{background:#FAFAF5}
+.accordion-head.open{border-bottom-color:#D8D7D2}
+.accordion-head-left{display:flex;align-items:center;gap:10px}
+.accordion-sys-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot-at{background:#378ADD}
+.dot-ga{background:#1D9E75}
+.dot-gs{background:#BA7517}
+.dot-hm{background:#8B5CF6}
+.accordion-title{font-size:13px;font-weight:700;color:#111}
+.accordion-summary{font-size:11px;color:#666;font-weight:600}
+.accordion-arrow{
+  font-size:12px;color:#888;transition:transform .2s;display:inline-block
+}
+.accordion-head.open .accordion-arrow{transform:rotate(180deg)}
+.accordion-body{
+  display:none;padding:12px;
+  display:grid;grid-template-columns:repeat(2,1fr);gap:8px
+}
+.accordion-body.hidden{display:none}
+
+.sys-card{
+  padding:10px 12px;border:1px solid #E5E4DE;border-radius:8px;background:#FAFAF7
+}
+.sys-card.issue{border-color:#E8A0A0;background:#FFFCFC;border-left:3px solid #D93A3A}
+.sys-card.resolved{border-color:#9ED080;background:#F6FCF0;border-left:3px solid #3D8B22}
+.sys-date{font-size:10px;color:#444;font-weight:700;margin-bottom:3px}
+.sys-title{font-size:12px;color:#111;font-weight:700;line-height:1.4;margin-bottom:3px}
+.sys-detail{font-size:11px;color:#333;line-height:1.65;font-weight:500}
+.sys-resolve{font-size:11px;color:#2A5200;font-weight:700;margin-top:5px}
+.sys-open{font-size:11px;color:#6B0F0F;font-weight:700;margin-top:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 헤더 -->
+<div class="header">
+  <h1>AI&amp;데이터팀 수집 이력 &amp; 이슈</h1>
+  <p>뉴플랫폼 론칭(2026-01-28) 이후 주요 변경·이슈 기록 · 최종 업데이트 2026-05-13</p>
+</div>
+
+<!-- ① 현재 이슈 -->
+<div class="live-section">
+  <div class="section-label">현재 이슈</div>
+
+  <div class="live-banner">
+    <div class="live-banner-left">
+      <div class="live-banner-title">
+        <span class="live-dot"></span>
+        article_scroll2 수집 저하 — 진행 중
+      </div>
+      <div class="live-banner-detail">
+        이슈 시작: 2026-01-28 · 수집률 37% 수준 지속<br>
+        <code>article_scroll2</code> 정상화 후 기사 조회시간·열독률 기준 확정 예정<br>
+        5/12 복구 시도 → 기준값 대비 11% 수준으로 미복구
+      </div>
+    </div>
+    <div class="live-banner-meta">Hmap 2.0</div>
+  </div>
+
+  <div class="live-resolved">
+    <div class="live-resolved-text">✅ session_start2 수집 복구 완료 — 이슈 기간: 4/9 ~ 5/12 · 96.6% 회복</div>
+    <div class="live-resolved-meta">5/12 해결</div>
+  </div>
+</div>
+
+<!-- ② 타임라인 -->
+<div class="tl-section">
+  <div class="section-label">이력 &amp; 이슈</div>
+
+  <div class="tl-toolbar">
+    <span class="tl-toolbar-left">최신순</span>
+    <div class="toggle-wrap">
+      <button class="toggle-btn active" onclick="filterTL('all',this)">전체</button>
+      <button class="toggle-btn" onclick="filterTL('issue',this)">이슈 이력만</button>
+    </div>
+  </div>
+
+  <div class="tl-track">
+
+    <div class="tl-month-divider"><span>5월</span></div>
+
+    <div class="tl-item" data-type="issue">
+      <div class="tl-date-col"><div class="tl-date-text">5/12</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-open"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card is-open">
+        <div class="tl-card-top"><span class="b b-hm">Hmap 2.0</span><span class="b b-open">진행 중</span></div>
+        <div class="tl-card-title">article_scroll2 수집 저하 — 복구 시도 후 미복구</div>
+        <div class="tl-card-detail">
+          이슈 기간: 1/28~ · 뉴플랫폼 론칭 직후부터 수집률 37% 수준 지속<br>
+          5/12 운영 배치 적용 후 확인 결과 기준값 대비 11% 수준 — 미복구<br>
+          기사 조회시간·열독률 Athena 산출 불가 상태 지속
+        </div>
+        <div class="tl-resolve">
+          <span class="tl-resolve-text open">🔴 진행 중 — 정상화 후 조회시간·열독률 기준 확정 예정</span>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="tl-item" data-type="issue">
+      <div class="tl-date-col"><div class="tl-date-text">5/12</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-done"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card is-done">
+        <div class="tl-card-top"><span class="b b-hm">Hmap 2.0</span><span class="b b-done">5/12 해결</span></div>
+        <div class="tl-card-title">session_start2 수집 복구</div>
+        <div class="tl-card-detail">
+          이슈 기간: 4/9 ~ 5/12<br>
+          운영 배치 적용 후 수집률 96.6% 회복 확인
+        </div>
+      </div></div>
+    </div>
+
+    <div class="tl-month-divider"><span>4월</span></div>
+
+    <div class="tl-item" data-type="issue">
+      <div class="tl-date-col"><div class="tl-date-text">4/28</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-done"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card is-done">
+        <div class="tl-card-top"><span class="b b-hm">Hmap 2.0</span><span class="b b-done">4/28 해결</span></div>
+        <div class="tl-card-title">공유 버튼 클릭 수집 정상화</div>
+        <div class="tl-card-detail">
+          이슈 기간: 1/28 ~ 4/27<br>
+          카카오·페이스북·트위터·링크복사 종류 구분 없이 수집되던 문제 해결<br>
+          SNS 종류별 구분 반영 · Athena 정상 수집 확인
+        </div>
+      </div></div>
+    </div>
+
+    <div class="tl-item" data-type="issue">
+      <div class="tl-date-col"><div class="tl-date-text">4/20</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-done"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card is-done">
+        <div class="tl-card-top"><span class="b b-at">Athena</span><span class="b b-done">4/20 해결</span></div>
+        <div class="tl-card-title">태블로 Athena 조회 권한 이슈</div>
+        <div class="tl-card-detail">
+          이슈 기간: 4/3 ~ 4/20<br>
+          IAM 내부 정책 변경으로 <code>athena:CreatePreparedStatement</code> 권한 분리됨 · 태블로에서 Athena 조회 불가
+        </div>
+      </div></div>
+    </div>
+
+    <div class="tl-month-divider"><span>3월</span></div>
+
+    <div class="tl-item" data-type="issue">
+      <div class="tl-date-col"><div class="tl-date-text">3/27</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-done"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card is-done">
+        <div class="tl-card-top"><span class="b b-ga">GA4</span><span class="b b-done">3/27 해결</span></div>
+        <div class="tl-card-title">구독/구독취소 이벤트 누락 해결</div>
+        <div class="tl-card-detail">
+          이슈 기간: 2/13 ~ 3/27 · 트리거 중복 수정 오류로 누락, 해당 기간 Salesforce로 대체 운영<br>
+          09:47 subscribe / un_subscribe 단일 트리거 정상화 완료
+        </div>
+      </div></div>
+    </div>
+
+    <div class="tl-item" data-type="issue">
+      <div class="tl-date-col"><div class="tl-date-text">3/11</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-done"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card is-done">
+        <div class="tl-card-top"><span class="b b-ga">GA4</span><span class="b b-done">3/11 해결</span></div>
+        <div class="tl-card-title">추천/관련 클릭 영역 구분 복구</div>
+        <div class="tl-card-detail">
+          이슈 기간: 2/14 ~ 3/11 · gtm-class 미수집으로 추천·관련 클릭 영역 구분 불가<br>
+          gtm-class 수집 시작으로 영역 구분 가능
+        </div>
+      </div></div>
+    </div>
+
+    <div class="tl-item" data-type="normal">
+      <div class="tl-date-col"><div class="tl-date-text">3/10</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-normal"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card">
+        <div class="tl-card-top"><span class="b b-at">Athena</span></div>
+        <div class="tl-card-title">origin_ua 필드 생성</div>
+        <div class="tl-card-detail">User-Agent 원문 문자열 수집 시작</div>
+      </div></div>
+    </div>
+
+    <div class="tl-month-divider"><span>2월</span></div>
+
+    <div class="tl-item" data-type="normal">
+      <div class="tl-date-col"><div class="tl-date-text">2/28</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-normal"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card">
+        <div class="tl-card-top"><span class="b b-gs">구글 서치 콘솔</span></div>
+        <div class="tl-card-title">개발팀 AMP 처리</div>
+        <div class="tl-card-detail">AMP → 일반웹 재분류 · '개선 필요' 감소, '느림' 재증가</div>
+      </div></div>
+    </div>
+
+    <div class="tl-item" data-type="issue">
+      <div class="tl-date-col"><div class="tl-date-text">2/27</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-done"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card is-done">
+        <div class="tl-card-top"><span class="b b-hm">Hmap 2.0</span><span class="b b-done">2/27 해결</span></div>
+        <div class="tl-card-title">통합회원번호(join_id) 빈값 적재</div>
+        <div class="tl-card-detail">
+          이슈 기간: 2/23 ~ 2/27 · 로그인 회원 join_id 미수집
+        </div>
+      </div></div>
+    </div>
+
+    <div class="tl-item" data-type="normal">
+      <div class="tl-date-col"><div class="tl-date-text">2/10</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-normal"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card">
+        <div class="tl-card-top"><span class="b b-at">Athena</span><span class="b b-ga">GA4</span></div>
+        <div class="tl-card-title">user_agent 수집 · GTM 트리거 추가</div>
+        <div class="tl-card-detail">
+          브라우저·OS 파싱값 수집 시작<br>
+          메인·기사내 영역 클릭 수집 시작
+        </div>
+      </div></div>
+    </div>
+
+    <div class="tl-item" data-type="normal">
+      <div class="tl-date-col"><div class="tl-date-text">2/8</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-normal"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card">
+        <div class="tl-card-top"><span class="b b-gs">구글 서치 콘솔</span></div>
+        <div class="tl-card-title">개발팀 CWV 조치</div>
+        <div class="tl-card-detail">반응형 컨버전 로직 변경 · CWV '느림' 감소, '개선 필요' 증가</div>
+      </div></div>
+    </div>
+
+    <div class="tl-item" data-type="normal">
+      <div class="tl-date-col"><div class="tl-date-text">2/5</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-normal"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card">
+        <div class="tl-card-top"><span class="b b-gs">구글 서치 콘솔</span></div>
+        <div class="tl-card-title">구글 알고리즘 변경</div>
+        <div class="tl-card-detail">이미지 1200px+ 기준 재적용 · 디스커버 재평가 시작</div>
+      </div></div>
+    </div>
+
+    <div class="tl-item" data-type="issue">
+      <div class="tl-date-col"><div class="tl-date-text">2/3</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-done"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card is-done">
+        <div class="tl-card-top"><span class="b b-ga">GA4</span><span class="b b-done">2/3 해결</span></div>
+        <div class="tl-card-title">GA4 자동 수집 이벤트 미수집 해결</div>
+        <div class="tl-card-detail">
+          이슈 기간: 1/28 ~ 2/3 · GTM 컨테이너 ID 미분리로 자동 수집 이벤트 전체 누락<br>
+          15:27 컨테이너 ID 분리 완료
+        </div>
+      </div></div>
+    </div>
+
+    <div class="tl-month-divider"><span>1월</span></div>
+
+    <div class="tl-item" data-type="normal">
+      <div class="tl-date-col"><div class="tl-date-text">1/28</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-normal"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card">
+        <div class="tl-card-top"><span class="b b-at">Athena</span><span class="b b-ga">GA4</span><span class="b b-gs">서치 콘솔</span><span class="b b-hm">Hmap 2.0</span></div>
+        <div class="tl-card-title">뉴플랫폼 론칭</div>
+        <div class="tl-card-detail">
+          모바일 봇 52.7% 급등 (세션당 PV 30건 이상 기준)<br>
+          PC → 모바일 반응형 전환으로 LCP 상승 · CWV '느림' 급증<br>
+          Hmap 2.0 도입
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ③ 시스템별 아코디언 -->
+<div class="accordion-section">
+  <div class="section-label">시스템별</div>
+
+  <!-- Athena -->
+  <div class="accordion">
+    <div class="accordion-head" onclick="toggleAcc(this)">
+      <div class="accordion-head-left">
+        <span class="accordion-sys-dot dot-at"></span>
+        <span class="accordion-title">Athena</span>
+        <span class="accordion-summary">4건 · 이슈 1건 해결</span>
+      </div>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body hidden">
+      <div class="sys-card">
+        <div class="sys-date">1/28</div>
+        <div class="sys-title">뉴플랫폼 론칭</div>
+        <div class="sys-detail">모바일 봇 52.7% 급등</div>
+      </div>
+      <div class="sys-card">
+        <div class="sys-date">2/10</div>
+        <div class="sys-title">user_agent 수집 시작</div>
+        <div class="sys-detail">브라우저·OS 파싱값</div>
+      </div>
+      <div class="sys-card">
+        <div class="sys-date">3/10</div>
+        <div class="sys-title">origin_ua 필드 생성</div>
+        <div class="sys-detail">User-Agent 원문 문자열</div>
+      </div>
+      <div class="sys-card resolved">
+        <div class="sys-date">4/3 → 4/20</div>
+        <div class="sys-title">태블로 조회 권한 이슈</div>
+        <div class="sys-detail">IAM 정책 변경으로 권한 분리</div>
+        <div class="sys-resolve">✅ 4/20 해결</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GA4 -->
+  <div class="accordion">
+    <div class="accordion-head" onclick="toggleAcc(this)">
+      <div class="accordion-head-left">
+        <span class="accordion-sys-dot dot-ga"></span>
+        <span class="accordion-title">GA4</span>
+        <span class="accordion-summary">4건 · 이슈 3건 해결</span>
+      </div>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body hidden">
+      <div class="sys-card resolved">
+        <div class="sys-date">1/28 → 2/3</div>
+        <div class="sys-title">자동 수집 이벤트 미수집</div>
+        <div class="sys-detail">GTM 컨테이너 ID 미분리</div>
+        <div class="sys-resolve">✅ 2/3 15:27 해결</div>
+      </div>
+      <div class="sys-card">
+        <div class="sys-date">2/10</div>
+        <div class="sys-title">GTM 트리거 추가</div>
+        <div class="sys-detail">메인·기사내 클릭 수집 시작</div>
+      </div>
+      <div class="sys-card resolved">
+        <div class="sys-date">2/13 → 3/27</div>
+        <div class="sys-title">구독/구독취소 이벤트 누락</div>
+        <div class="sys-detail">트리거 오류 · Salesforce 대체</div>
+        <div class="sys-resolve">✅ 3/27 09:47 해결</div>
+      </div>
+      <div class="sys-card resolved">
+        <div class="sys-date">2/14 → 3/11</div>
+        <div class="sys-title">추천/관련 클릭 구분 불가</div>
+        <div class="sys-detail">gtm-class 미수집</div>
+        <div class="sys-resolve">✅ 3/11 해결</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 구글 서치 콘솔 -->
+  <div class="accordion">
+    <div class="accordion-head" onclick="toggleAcc(this)">
+      <div class="accordion-head-left">
+        <span class="accordion-sys-dot dot-gs"></span>
+        <span class="accordion-title">구글 서치 콘솔</span>
+        <span class="accordion-summary">4건</span>
+      </div>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body hidden">
+      <div class="sys-card">
+        <div class="sys-date">1/28</div>
+        <div class="sys-title">CWV '느림' 급증</div>
+        <div class="sys-detail">PC→모바일 반응형 전환으로 LCP 상승</div>
+      </div>
+      <div class="sys-card">
+        <div class="sys-date">2/5</div>
+        <div class="sys-title">구글 알고리즘 변경</div>
+        <div class="sys-detail">이미지 1200px+ 기준 재적용<br>디스커버 재평가 시작</div>
+      </div>
+      <div class="sys-card">
+        <div class="sys-date">2/8</div>
+        <div class="sys-title">개발팀 CWV 조치</div>
+        <div class="sys-detail">반응형 로직 변경<br>'느림' 감소, '개선 필요' 증가</div>
+      </div>
+      <div class="sys-card">
+        <div class="sys-date">2/28</div>
+        <div class="sys-title">개발팀 AMP 처리</div>
+        <div class="sys-detail">AMP→일반웹 재분류<br>'개선 필요' 감소, '느림' 재증가</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hmap 2.0 -->
+  <div class="accordion">
+    <div class="accordion-head" onclick="toggleAcc(this)">
+      <div class="accordion-head-left">
+        <span class="accordion-sys-dot dot-hm"></span>
+        <span class="accordion-title">Hmap 2.0</span>
+        <span class="accordion-summary">4건 · 이슈 3건 해결 · 1건 진행 중</span>
+      </div>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body hidden">
+      <div class="sys-card issue">
+        <div class="sys-date">1/28 ~ 진행 중</div>
+        <div class="sys-title">article_scroll2 수집 저하</div>
+        <div class="sys-detail">수집률 37% · 조회시간·열독률 산출 불가</div>
+        <div class="sys-open">🔴 진행 중 (5/12 미복구)</div>
+      </div>
+      <div class="sys-card resolved">
+        <div class="sys-date">2/23 → 2/27</div>
+        <div class="sys-title">통합회원번호(join_id) 빈값</div>
+        <div class="sys-detail">로그인 회원 join_id 미수집</div>
+        <div class="sys-resolve">✅ 2/27 해결</div>
+      </div>
+      <div class="sys-card resolved">
+        <div class="sys-date">1/28 → 4/28</div>
+        <div class="sys-title">공유 클릭 수집 오류</div>
+        <div class="sys-detail">SNS 종류 구분 없이 수집</div>
+        <div class="sys-resolve">✅ 4/28 해결</div>
+      </div>
+      <div class="sys-card resolved">
+        <div class="sys-date">4/9 → 5/12</div>
+        <div class="sys-title">session_start2 수집 급감</div>
+        <div class="sys-detail">수집률 15~20% · 방문당PV 일별 산출 불가</div>
+        <div class="sys-resolve">✅ 5/12 해결 — 96.6% 복구</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+function filterTL(type, btn){
+  document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tl-item').forEach(el=>{
+    if(type==='all') el.classList.remove('hidden');
+    else el.classList.toggle('hidden', el.dataset.type!=='issue');
+  });
+  document.querySelectorAll('.tl-month-divider').forEach(div=>{
+    let hasVisible=false;
+    let cur=div.nextElementSibling;
+    while(cur&&!cur.classList.contains('tl-month-divider')){
+      if(cur.classList.contains('tl-item')&&!cur.classList.contains('hidden')) hasVisible=true;
+      cur=cur.nextElementSibling;
+    }
+    div.style.display=hasVisible?'':'none';
+  });
+}
+
+function toggleAcc(head){
+  head.classList.toggle('open');
+  const body=head.nextElementSibling;
+  body.classList.toggle('hidden');
+}
+</script>
+</body>
+</html>
