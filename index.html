@@ -232,7 +232,7 @@ body{
       <div class="live-banner-detail">
         이슈 시작: 2026-01-28 · 수집률 37% 수준 지속<br>
         <code>article_scroll2</code> 정상화 후 기사 조회시간·열독률 기준 확정 예정<br>
-        5/12 복구 시도 → 기준값 대비 11% 수준으로 미복구
+        개발팀 스크롤·섹션 건 개선 코드 적용(5/12) → 데이터 확인 결과 기준값 대비 11% 수준으로 미복구
       </div>
     </div>
     <div class="live-banner-meta">Hmap 2.0</div>
@@ -265,10 +265,10 @@ body{
       <div class="tl-node-wrap"><div class="tl-node ev-open"></div></div>
       <div class="tl-card-wrap"><div class="tl-card is-open">
         <div class="tl-card-top"><span class="b b-hm">Hmap 2.0</span><span class="b b-open">진행 중</span></div>
-        <div class="tl-card-title">article_scroll2 수집 저하 — 복구 시도 후 미복구</div>
+        <div class="tl-card-title">article_scroll2 수집 저하 — 개발팀 개선 코드 적용 후 미복구 확인</div>
         <div class="tl-card-detail">
           이슈 기간: 1/28~ · 뉴플랫폼 론칭 직후부터 수집률 37% 수준 지속<br>
-          5/12 운영 배치 적용 후 확인 결과 기준값 대비 11% 수준 — 미복구<br>
+          개발팀 스크롤·섹션 건 개선 코드 적용(5/12) → 데이터 확인 결과 기준값 대비 11% 수준으로 미복구<br>
           기사 조회시간·열독률 Athena 산출 불가 상태 지속
         </div>
         <div class="tl-resolve">
@@ -357,6 +357,22 @@ body{
       </div></div>
     </div>
 
+    <div class="tl-item" data-type="issue">
+      <div class="tl-date-col"><div class="tl-date-text">3/5</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-done"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card is-done">
+        <div class="tl-card-top"><span class="b b-at">Athena</span><span class="b b-done">3/6 완료</span></div>
+        <div class="tl-card-title">개편 이후 봇으로 정산된 허브 데이터 보정 작업</div>
+        <div class="tl-card-detail">
+          1/28 이후 봇으로 정산된 hmap1.0 데이터 보정 · 봇(Yeti) 제거 후 재정산<br>
+          일별(주·월) 정산값·채널값·인기기사·부서별 정산값 대상
+        </div>
+        <div class="tl-resolve">
+          <span class="tl-resolve-text done">✅ 3/6 보정 작업 완료</span>
+        </div>
+      </div></div>
+    </div>
+
     <div class="tl-month-divider"><span>2월</span></div>
 
     <div class="tl-item" data-type="normal">
@@ -382,14 +398,25 @@ body{
     </div>
 
     <div class="tl-item" data-type="normal">
+      <div class="tl-date-col"><div class="tl-date-text">2/13</div></div>
+      <div class="tl-node-wrap"><div class="tl-node ev-normal"></div></div>
+      <div class="tl-card-wrap"><div class="tl-card">
+        <div class="tl-card-top"><span class="b b-ga">GA4</span></div>
+        <div class="tl-card-title">GTM 트리거 추가</div>
+        <div class="tl-card-detail">
+          메인·기사내 영역 클릭 수집 시작
+        </div>
+      </div></div>
+    </div>
+
+    <div class="tl-item" data-type="normal">
       <div class="tl-date-col"><div class="tl-date-text">2/10</div></div>
       <div class="tl-node-wrap"><div class="tl-node ev-normal"></div></div>
       <div class="tl-card-wrap"><div class="tl-card">
-        <div class="tl-card-top"><span class="b b-at">Athena</span><span class="b b-ga">GA4</span></div>
-        <div class="tl-card-title">user_agent 수집 · GTM 트리거 추가</div>
+        <div class="tl-card-top"><span class="b b-at">Athena</span></div>
+        <div class="tl-card-title">user_agent 수집 시작</div>
         <div class="tl-card-detail">
-          브라우저·OS 파싱값 수집 시작<br>
-          메인·기사내 영역 클릭 수집 시작
+          브라우저·OS 파싱값 수집 시작
         </div>
       </div></div>
     </div>
@@ -456,7 +483,7 @@ body{
       <div class="accordion-head-left">
         <span class="accordion-sys-dot dot-at"></span>
         <span class="accordion-title">Athena</span>
-        <span class="accordion-summary">4건 · 이슈 1건 해결</span>
+        <span class="accordion-summary">6건 · 이슈 2건 해결</span>
       </div>
       <span class="accordion-arrow">▼</span>
     </div>
@@ -482,6 +509,12 @@ body{
         <div class="sys-detail">IAM 정책 변경으로 권한 분리</div>
         <div class="sys-resolve">✅ 4/20 해결</div>
       </div>
+      <div class="sys-card resolved">
+        <div class="sys-date">3/5 → 3/6</div>
+        <div class="sys-title">허브 데이터 보정 작업 (봇 트래픽 제외)</div>
+        <div class="sys-detail">1/28 이후 봇 정산분 재처리 · 일별/주·월 집계값 대상</div>
+        <div class="sys-resolve">✅ 3/6 완료</div>
+      </div>
     </div>
   </div>
 
@@ -503,7 +536,7 @@ body{
         <div class="sys-resolve">✅ 2/3 15:27 해결</div>
       </div>
       <div class="sys-card">
-        <div class="sys-date">2/10</div>
+        <div class="sys-date">2/13</div>
         <div class="sys-title">GTM 트리거 추가</div>
         <div class="sys-detail">메인·기사내 클릭 수집 시작</div>
       </div>
