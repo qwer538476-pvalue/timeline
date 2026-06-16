@@ -226,9 +226,9 @@ body{
           <span class="pipe-res-badge" style="background:#FAC8C8;color:#5A0C0C;margin-top:10px;font-size:10px;padding:3px 8px">🔴 진행 중</span>
           <span class="pipe-res-badge" style="margin-top:4px;font-size:10px;padding:3px 8px">✅ 해결 2건</span>
           <div style="font-size:10px;color:#444;margin-top:8px;line-height:1.8;text-align:left">
-            1. 멤버십 이벤트명 오류<br>
-            &nbsp;&nbsp;&nbsp;(login1·sign_up1 등)<br>
-            2. 로그아웃 이벤트 미발생
+            1. 멤버십 이벤트 수집 오류<br>
+            &nbsp;&nbsp;&nbsp;(이벤트명 오류·<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;로그아웃 미발생)
           </div>
         </div>
       </div>
@@ -313,7 +313,7 @@ body{
         <div class="pipe-node" style="width:140px;padding:14px 16px">
           <div class="pipe-node-cat">분석 플랫폼</div>
           <div class="pipe-node-name" style="font-size:13px;margin-top:4px">GA4</div>
-          <div style="font-size:10px;color:#444;margin-top:8px;line-height:1.8;text-align:left">· 집계·UI 확인에 강함<br>· raw 분석은 BigQuery 경유</div>
+          <div style="font-size:10px;color:#444;margin-top:8px;line-height:1.8;text-align:left">· 집계·UI 확인에 강함<br>· raw 분석은<br>&nbsp;&nbsp;BigQuery 경유</div>
         </div>
       </div>
       <div class="pipe-arrow" style="margin-top:0;padding:0 8px;color:#C0BFC8">⇄</div>
@@ -359,8 +359,8 @@ body{
         <span class="issue-card-sys">Athena · Hmap 2.0 ② 이벤트 구성</span>
       </div>
       <div class="issue-card-body">
-        개편 전에는 영역 내 스크롤 발생 시마다 이벤트가 전송되어 engagement_time이 누적되었으나, 개편 후에는 영역 간 이동 시에만 이벤트가 전송되는 방식으로 변경되었습니다.<br>
-        이로 인해 같은 방문이라도 개편 후 측정되는 체류시간이 구조적으로 낮게 산출되며, 개편 이전 수치(98~121초)와 직접 비교가 불가합니다.<br>
+        개편 전에는 영역 내 스크롤 발생 시마다 이벤트가 전송되어 engagement_time이 누적되었으나, 개편 후에는 영역 간 이동 시에만 이벤트가 전송되는 방식으로 변경됨.<br>
+        이로 인해 같은 방문이라도 개편 후 측정되는 체류시간이 구조적으로 낮게 산출되며, 개편 이전 수치(98~121초)와 직접 비교 불가.<br>
         <strong>개편 이전(1/25~27):</strong> 98초 / 121초 / 120초
       </div>
       <div class="issue-summary amber">⚠️ 이벤트 수집 방식 변경에 따른 측정 누락인지, 실제 체류시간 감소인지 현재 데이터만으로 구분 어려움</div>
